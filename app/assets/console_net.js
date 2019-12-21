@@ -103,6 +103,28 @@ var _cmdList = [
           dataDiv.innerHTML = data_msg;
       }
     },
+    { token : ":del",
+      args : ["PATTERN"],
+      helpmsg : "Remove element with matching labels",
+      process : function( cmdLine, story, outputDiv, dataDiv ) {
+          var pattern = cmdLine.slice( 5 );
+          var found = regsearchLabelInEventArray( NEventArray, pattern );
+          console.log( "FOUND ",found );
+          var data_msg = "<p>search label ARG="+pattern+"=</p>";
+          
+          var msg = "Détruits ces Events : ";
+          for( var ie = 0; ie < found.length; ie++ ) {
+              msg += found[ie].label+", ";
+              data_msg += found[ie].label+", ";
+          }
+          dataDiv.innerHTML = data_msg;
+          
+          var choice = confirm( msg );
+          if (choice == true ) {
+              removeEvents( found );
+          }
+      }
+    },
     { token : ":license",
       helpmsg : "DEBUG Silly little message",
       process : function( cmdLine, story, outputDiv, dataDiv ) {
@@ -974,7 +996,7 @@ NConsole.prototype.updateContext = function() {
 Neutralino.init({
     load: function() {
         console.log( "Loading" );
-        //populateEvents();
+        populateEvents();
         //COMP _eventViewer.build();
         var nConsole = new NConsole( document.getElementById( "input_textarea" ),
                                      document.getElementById( "input_context" ),

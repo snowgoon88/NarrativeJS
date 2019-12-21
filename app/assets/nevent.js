@@ -51,9 +51,24 @@ var listEvent = function() {
     }
     return msg;
 }
+var removeEvents = function( eventsArray ) {
+    // for each event, find its index in Array and remove it using splice
+    for (var ie = 0; ie < eventsArray.length; ie++ ) {
+        let event = eventsArray[ie];
+        // find it
+        for( var index = 0; index < NEventArray.length; index++ ) {
+            if (NEventArray[index].id === event.id) {
+                NEventArray.splice( index, 1 );
+                break;
+            }
+        }
+    }
+}
 /** 
  * pattern is a regular expression
  * search is case sensitive
+ *
+ * Returns : [NEvent]
 */
 function regsearchLabelInEventArray( evArray, pattern ) {
     // regexp search pattern, case sensitive

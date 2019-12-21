@@ -3,9 +3,9 @@
 * Fonctionnalité
 ** Choisir plusieurs sélection => Pk Faire ?
 ** Centrer sur une sélection
-* [0/1] Story
-** NEventArray a member of Story ?
-** TODO remove node(s) => like search
+* [1/2] Story
+** TODO NEventArray a member of Story ?
+** DONE remove node(s) => like search
 * [3/4] SEARCH avec dates
 ** DONE date
 ** DONE date incomplète
