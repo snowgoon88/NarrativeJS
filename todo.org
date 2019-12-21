@@ -1,0 +1,90 @@
+* CURRENT : redisplay after adding node using [[add_node]]
+* CURRENT : [[add_node]] while preserving order
+* Fonctionnalité
+** Choisir plusieurs sélection => Pk Faire ?
+** Centrer sur une sélection
+* [0/1] Story
+** NEventArray a member of Story ?
+** TODO remove node(s) => like search
+* [3/4] SEARCH avec dates
+** DONE date
+** DONE date incomplète
+** DONE intervale date -> date
+** TODO intervale date + periode
+see https://stackoverflow.com/questions/563406/add-days-to-javascript-date
+* DONE [5/5] Completions
+<<comp>>
+- assets/console_net.css
+- assets/text-area-caret-position.js
+- assets/date_intervale.js                     => IDates
+- assets/nevent.js                             => populateEvents(),
+- assets/console_net.js
+** DONE make lighter app with only console and completion
+No more EventViewer.
+Display carret position
+** [2/2] test some basic commands
+*** :? help
+*** DONE :list 
+<<list>>
+*** DONE :license (dummy)
+print silly text
+** DONE test completion on commands ? (list vs license)
+start with ":"
+nécessite de ré-écrire completion qui dépend de TiddlyWiki => include dans console_net.js pour l'instant.
+** DONE test some basic completion with static list of things :o)
+completion depends on the current command ?
+var elise with lab: zero un deux trois quatre
+** DONE completion sur une commande qui veut un noeuds ensuite
+<<complex>>
+** DONE Si rien pour compléter, attention à juste <hr> comme completion
+<<voidcomp>>
+- ajoute '<hr>' et otherMatches que si otherMatches n'est pas vide dans bestMatches
+- test pour sélection de seulement '<hr>'
+- ajout de `this._bestMatches= [];` après `insertInto`
+*** TODO added command :see +label/id => process to define
+<<seeCmd>>
+*** added Template for node '<'
+*** 
+* [0/1] Command + Viewer
+** display node as txt (React)
+** cmd focus on node
+** click node => display as txt
+** TODO add node => recompute topological-like order and levels
+<<add_node>>
+* [4/4] Nodes and Dates
+** DONE add date to ENode
+<<add_date>>
+** DONE a visNode can have a level -> hierarchy
+<<node_level>>
+** DONE [1/1] create link between adjacent ENode
+*** DONE adjacent : closet with startTime>endTime
+** DONE [1/1] display ENode date
+<<display_date>>
+*** DONE HH:MM
+* Features
+** DONE CONFIG : config --mode|-m browser|desktop <name> (where index_name.html exists)
+crée liens dans app
+- index.html -> index_name.html
+- settings.json -> settings-[browser|app].json
+** update levels/successors when adding a node
+** DONE load/save NEventArray to file (using JSON)
+** populate NEventArray with some NEvent
+** console parse some cmd
+** create ENode, displayed as graph
+- NEvent + IDate => vis graph with hierarchical layout by giving a level to every node. (toGraph, levelsGraph in even_viewer.js). Furthermore, an edge is created between adjacent nodes (closet predecessor)
+** date_intervale: parse datePbj from "[dd/][mm/]yyy [hh][Hh:][mm]"
+* PAST
+** [[node_level]] in [[file:app/assets/ntest_level.js]]
+** parse negative years in [[file:app/assets/ntest_idate.js::80]]
+** add container for graph node [[file:app/assets/console_net.js::35]]
+** React javascript
+*** installed dev version 0.14.3
+https://react-cn.github.io/react/downloads.html 
+* ORG
+** Link [[link][display
+*** file:rel_path::NNN or ::search words
+*** C-c l : store link
+*** C-c C-o : follow link
+*** C-c C-l : edit link/insert link
+** TODO
+*** C-c / t : sparse todo tree

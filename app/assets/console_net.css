@@ -1,0 +1,76 @@
+html, body {
+    margin: 0px;
+    padding: 0px;
+}
+
+div {
+    /*border-style: solid;*/
+    /*width: 100%;*/
+    box-sizing : border-box;
+    display: block;
+    position: relative;
+}
+/* ***** VIZ *************************** */
+#viz_div {
+    border-style: solid;
+    width: 50%;
+    float: right;
+    /*height: 100%;*/
+    /*min-height: 100%;*/
+}
+
+/* ***** TEXT ************************** */
+#text_div {
+    border-style: solid;
+    width: 100%;           /* DEBUG, return to 50% */
+    height: 100%;
+}
+
+#input_div::before {
+    position: absolute; /* relative to div I think */
+    top: 0.9rem;   /* a bit low to align with #input_textarea */
+    content: ">> ";
+    color: blue;
+    font-weight: bold;
+}
+#input_textarea {
+    background-color: lavender;
+    padding: 0.6rem;
+    padding-left: 1.4rem;    /* some room for ::before */
+    display: block;
+    box-sizing : border-box; /* size include padding and border in size */
+    width: 100%;
+}
+#console_ouput {
+    background-color: lightgray;
+}
+
+#completion_popup {
+    position: absolute;
+    display: none;      /* hidden by default */
+    background-color: #ffffff;
+    box-sizing : border-box;
+    z-index: 2; 
+}
+.dropdown {
+    min-width: 220px;
+    border: 1px solid #bbb;
+    background-color: #ffffff;
+    padding: 7px 0;
+    margin: 4px 0 0 0;
+}
+.dropdown li {
+    display: block;
+    padding: 4px 14px 4px 14px;
+    text-decoration: none;
+    color: #5778d8; 
+    /*background: transparent;*/
+}
+.dropdown li[patt-selected="true"] {
+    color:  #ffffff;
+    background-color: #5778d8;
+}
+.dropdown li[patt-selected="true"] mark {
+    background: hsl(86, 100%, 21%);
+    color: inherit;
+}

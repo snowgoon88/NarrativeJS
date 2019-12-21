@@ -1,0 +1,123 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+  <title>Test YAML</title>
+
+  <!--script type="text/javascript" src="/assets/vis.js"></script-->
+  <link rel="stylesheet" href="/assets/console_net.css">
+  <!--link rel="stylesheet" href="/assets/vis.css"-->
+  <!--link href="/assets/vis-network.min.css" rel="stylesheet" type="text/css"-->
+
+  </style>
+</head>
+
+<body>
+  <div>
+    <p>En fait, YAML marche pas, mais JSON c'est pratique...</p>
+    <p>Et on sauvegarde dans data/file1.txt</p>
+  </div>
+  <div id="event">EVENT</div>
+  <div id="yaml">YAML</div>
+  <div id="read">READ</div>
+  <div id="info_console">INFO: </div>
+
+  <script src="/neutralino.js"></script>
+  <script src="/assets/utils.js"></script>
+  <script src="/assets/date_intervale.js"></script>
+  <script src="/assets/nevent.js"></script>
+  <!--script src="js-yaml.js"></script-->
+  
+  <script>
+    Neutralino.init({
+    load : function() {
+    <!-- console.log( "Create ev" ); -->
+    <!-- var idate = new IDate( dateFromObj( parseDateStr( "1/4/10 00:00" )), -->
+    <!--                     dateFromObj( parseDateStr( "1/5/10 00:00" )) ); -->
+    <!-- var ev = new NEvent( 0, "Essai Event", idate ); -->
+    <!-- document.getElementById( 'event' ).innerHTML = typeof(ev) +" EVENT = "+ev.toString(); -->
+
+    <!-- //var doc_yaml = jsyaml.dump( ev ); -->
+    <!-- var doc_json = JSON.stringify(ev); -->
+    <!-- document.getElementById( 'yaml' ).innerHTML = "JSON = "+doc_json; -->
+
+    //populateEvents();
+    //console.log( "ALL = ",NEventArray);
+    //var arr_json = JSON.stringify( NEventArray );
+    <!-- Neutralino.filesystem.writeFile('data/fileAll.txt', arr_json,  -->
+    <!-- //Neutralino.filesystem.writeFile('data/file1.txt', doc_json, -->
+    <!-- //Neutralino.filesystem.writeFile('data/file2.txt', doc_json, -->
+    <!-- function (data) { -->
+    <!-- console.log( "Wrote : ",data); -->
+    <!--   Neutralino.filesystem.readFile('data/file1.txt', -->
+    <!--   function (data) { -->
+    <!--   console.log("Read ; ",data); -->
+    <!--   var myObj = JSON.parse( data.content ); -->
+    <!-- document.getElementById( 'read' ).innerHTML = "READ = "+data.content+"<br>="+data.content.toString()+"<br>+"+myObj.toString(); -->
+    <!-- console.log("NEW : ",myObj," ",typeof(myObj)); -->
+    <!-- var myEv = new NEvent(); -->
+    <!-- myEv.fromJSON( myObj ); -->
+    <!-- console.log( "NEvent = ",myEv," ",myEv.toString() ); -->
+    <!-- document.getElementById( 'read' ).innerHTML = document.getElementById( 'read' ).innerHTML+"<br>fromJSON = "+myEv.toString(); -->
+    <!--   }, -->
+    <!--   function () { -->
+    <!--   console.error('error reading'); -->
+    <!--   } -->
+    <!--   ); -->
+
+    
+    <!-- }, -->
+    <!-- function (){ -->
+    <!-- console.error('error writing'); -->
+    <!-- } -->
+    <!-- ); -->
+
+    displayMsg( 'event', listEvent() );
+    console.time( 'readjson' );
+    var _start = new Date();
+    console.log( "_start", _start );
+    displayMsg( 'info_console', 'Loading...', 'INFO : ');
+    Neutralino.filesystem.readFile('data/fileAll.txt',
+      function (data) {
+      console.log("Read ; ",data);
+    
+      var myObj = JSON.parse( data.content );
+      //document.getElementById( 'read' ).innerHTML = "READ = "+data.content+"<br>="+data.content.toString()+"<br>+"+myObj.toString();
+      //console.log("NEW : ",myObj," ",typeof(myObj));
+
+    //var msg = "";
+    //var myDate = new NEvent();
+    //for( var io=0; io < myObj.length; io++ ) {
+    //     myDate.fromJSON( myObj[io] );
+    //     msg += myDate.toString()+"<br>";               
+                          //}
+    populateFromJSON( myObj );                      
+    displayMsg( 'read', listEvent() );
+    console.timeEnd( 'readjson' );
+    var _end = new Date();
+    console.log( "_start", _start );                    
+    console.log( "_end", _end );
+    var _diff = _end - _start;
+    console.log( _diff );                    
+    displayMsg( 'info_console', 'Loaded in '+_diff+' ms.', 'INFO : ');                    
+      },
+      function () {
+        console.error('error reading');
+      }
+      );    
+    
+    },
+    pingSuccessCallback : function() {
+        var info_console = document.getElementById('info_console');
+        info_console.innerHTML = "Success !";
+    },
+    pingFailCallback : function() {
+        var info_console = document.getElementById('info_console');
+        info_console.innerHTML = "Failure !";
+
+    }
+    });
+  </script>
+
+</body>
+</html>
