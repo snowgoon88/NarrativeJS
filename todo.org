@@ -1,8 +1,14 @@
 * CURRENT : redisplay after adding node using [[add_node]]
 * CURRENT : [[add_node]] while preserving order
-* Fonctionnalité
+* Fonctionnalités
 ** Choisir plusieurs sélection => Pk Faire ?
 ** Centrer sur une sélection
+** assigner les sélections à des variables (ou des recherches)
+*** Ce qui veut dire mettre à jour quand on delete !
+* [1/1] REACT
+** DONE simple standalone REACT avec Hello World => app_react.js
+** apprendre avec https://reactjs.org/docs/hello-world.html
+*** CURRENT in Handling Events
 * [1/2] Story
 ** TODO NEventArray a member of Story ?
 ** DONE remove node(s) => like search

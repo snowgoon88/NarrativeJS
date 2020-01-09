@@ -1,0 +1,43 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+  <title>Test REACT</title>
+
+  <!-- Import the React, React-Dom and Babel libraries from unpkg -->
+  <script type="application/javascript" src="./assets/react.js"></script>
+  <script type="application/javascript" src="./assets/react-dom.js"></script>
+  <script type="application/javascript" src="./assets/babel.js"></script>
+  
+</head>
+
+<body>
+  <div id="intro">
+    <h1> Testons un standalone avec REACT</h1>
+    <p>Le but est de voir si on peut aisément inclure du REACT avec Neuralino. Il est aussi possible de se référer à <a href="https://github.com/neutralinojs/neutralinojs-reactjs-template">ce lien github</a>.</p>
+    <p>Quand on utiliser du JSX dans le script javascript
+      <pre>
+        <code>
+          const element = &lt;h3&gt;Hello, world&lt/h3&gt;
+        </code>
+      </pre>
+      il faut ensuite passer par <a href="">Babel</a> pour le transformer, soit enligne dans le Browser en incluant un script babel.js, soit en précompilant.
+    </p>
+  </div>
+
+  <div>
+    <hr/>
+    <h2>React</h2>
+  </div>
+  <div id="root"></div>
+  <div><hr/></div>
+
+  <script src="/neutralino.js"></script>
+  <script type="text/javascript" src="/assets/utils.js"></script>
+  <script type="text/javascript" src="/assets/date_intervale.js"></script>
+  <script type="text/javascript" src="/assets/nevent.js"></script>
+
+  <script type="text/babel" src="/assets/app_react.js"></script>
+  
+</body>
+</html>
