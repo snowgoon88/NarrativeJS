@@ -67,6 +67,24 @@ var elise with lab: zero un deux trois quatre
 ** DONE [1/1] display ENode date
 <<display_date>>
 *** DONE HH:MM
+* VIS
+** Node : https://visjs.github.io/vis-network/docs/network/nodes.html
+*** label (title if hover)
+*** id
+*** shape 
+*** color
+*** level (if hierarchical)
+*** hidden
+*** fixed / physics
+** Edge : https://visjs.github.io/vis-network/docs/network/edges.html
+*** dashes / width
+*** from / to 
+*** hidden
+*** (id)
+*** label
+*** arrows + options / arrowStrikethrough
+*** color
+** Manipulation : supply functions used in GUI to add/edit/delete
 * Features
 ** DONE CONFIG : config --mode|-m browser|desktop <name> (where index_name.html exists)
 crée liens dans app

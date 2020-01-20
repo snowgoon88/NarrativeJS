@@ -15,7 +15,9 @@ var displayNodes = function() {
         {from: 1, to: 2},
         {from: 2, to: 4},
         {from: 2, to: 5},
-        {from: 3, to: 3}
+        {from: 3, to: 3},
+        {from: 2, to: 6},
+        {from: 6, to: 8}
     ]);
 
     // create a network
