@@ -9,8 +9,9 @@
 * [0/1] New Story
 ** class Story = { nodes, edges }
 *** class NodePerson, style depends on fields
-** TODO [0/1] REACT Component to set physics details (physics.barnesHut)
+** TODO [0/2] REACT Component to set physics details (physics.barnesHut)
 <<barneshut>>
+*** TODO Btn to change physics options
 *** TODO slider 
 ** [0/2] UseCase
 *** TODO center on one Node

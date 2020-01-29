@@ -6,11 +6,16 @@
 
     <style type="text/css">
     #vis_canvas {
-      width: 900px;
-      height: 800px;
+      width: 600px;
+      height: 600px;
       border: 1px solid lightgray;
     }
     </style>
+
+    <!-- Import the React, React-Dom and Babel libraries from unpkg -->
+    <script type="application/javascript" src="react.js"></script>
+    <script type="application/javascript" src="react-dom.js"></script>
+    <!--script type="application/javascript" src="babel.js"></script-->
 
     <link href="fontawesome/css/all.css" rel="stylesheet"> <!--load all styles -->
   </head>
@@ -18,11 +23,19 @@
   <body>
     <p>Hop <i class="fas fa-skull"></i></p>
     <div id="vis_canvas"></div>
-
+    <div>
+      <p>React</p>
+    <div id="react_root"></div>
+    </div>
+    
     <script src="vis.js"></script>
     <script src="node_person.js"></script>
     <script src="story.js"></script>
     <script src="test_story.js"></script>
+
+    
+    <script src="physics_comp.js"></script>
+    <script src="test_visreact.js"></script>
     
     <button onclick="nextCmd()">Step</button>
     <button onclick="batchCmd( cmdList02 )">Batch</button>
