@@ -1,14 +1,14 @@
-const phys_options = {
-    barnesHut : {
-        gravitationalConstant : -2000,
-        centralGravity : 0.3,
-        springLength : 95,
-        springConstant : 0.04,
-        damping : 0.09,
-        avoidOverlap : 0
-    }
-};
-const element = <PhysicsComp barnesHut={phys_options.barnesHut} />;
+// *****************************************************************************
+// test React Component for VIS Physics model
+//
+// require : story.js (phys_options), physics_comp.js
+// *****************************************************************************
+
+const element = <PhysicsComp
+                    network={network}
+                    barnesHut={phys_options.barnesHut}
+                    maxVelocity={phys_options.maxVelocity}
+/>;
 
 ReactDOM.render(
     element,

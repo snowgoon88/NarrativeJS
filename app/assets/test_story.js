@@ -18,7 +18,20 @@ let story = new Story();
 
 // create network using story in proper container
 let container = document.getElementById( 'vis_canvas' );
-let options = {};
+const phys_options = {
+    barnesHut : {
+        gravitationalConstant : -2000,
+        centralGravity : 0.3,
+        springLength : 200,
+        springConstant : 0.04,
+        damping : 0.09,
+        avoidOverlap : 0.7
+    },
+    maxVelocity : 15
+};
+let options = {
+    physics : phys_options
+};
 //let network = new vis.Network( container, { nodes : story.nodes }, options );
 let network = new vis.Network( container, story, options );
 

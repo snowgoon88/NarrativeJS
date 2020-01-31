@@ -1,4 +1,3 @@
-* CURRENT : set physics properties [[barneshut]]
 * CURRENT : redisplay after adding node using [[add_node]]
 * CURRENT : [[add_node]] while preserving order
 * Fonctionnalités
@@ -6,14 +5,14 @@
 ** Centrer sur une sélection
 ** assigner les sélections à des variables (ou des recherches)
 *** Ce qui veut dire mettre à jour quand on delete !
-* [0/1] New Story
+* [1/2] New Story
 ** class Story = { nodes, edges }
 *** class NodePerson, style depends on fields
-** TODO [0/2] REACT Component to set physics details (physics.barnesHut)
+** DONE [0/0] REACT Component to set physics details (physics.barnesHut)
 <<barneshut>>
-*** TODO Btn to change physics options
-*** TODO slider 
-** [0/2] UseCase
+*** Btn to change physics options
+*** slider 
+** TODO [0/2] UseCase
 *** TODO center on one Node
 *** TODO center on a selection of Nodes
 * [1/1] REACT
