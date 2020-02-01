@@ -67,6 +67,17 @@ var elise with lab: zero un deux trois quatre
 ** DONE [1/1] display ENode date
 <<display_date>>
 *** DONE HH:MM
+* BABEL, JSX, Emacs config, etc
+** Dans SandReact, marche si utilise les dernieres version de babel/react...
+** Babel
+*** https://babeljs.io/docs/en/usage
+npm install --save-dev @babel/core @babel/cli @babel/preset-env
+npm install --save @babel/polyfill
+create Project/NarrativeJS/babel.config.json
+** Emacs
+http://codewinds.com/blog/2015-04-02-emacs-flycheck-eslint-jsx.html#improving_the_jsx_syntax-hightlighting_in_web-mode
+npm install -g eslint babel-eslint eslint-plugin-react
+create ~/.eslintrc
 * Features
 ** DONE CONFIG : config --mode|-m browser|desktop <name> (where index_name.html exists)
 crée liens dans app
