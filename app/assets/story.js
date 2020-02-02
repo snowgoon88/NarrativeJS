@@ -1,16 +1,16 @@
 // *****************************************************************************
 // Story : a collection of people, event, relations, etc as VIS nodes and edges.
 //
-// Require : vis.js, node_person.js
+// Require : vis.js, node_person.js, relation.js
 // *****************************************************************************
-//let colorFeminin  = 'rgba( 240, 168, 223, 1 )';
-//let colorMasculin = 'rgba( 168, 203, 240, 1 )';
 
 class Story {
     constructor() {
         this.nodes = new vis.DataSet( {} );
         this.edges = new vis.DataSet( {} );
         this.idNodes = 0;
+        
+        this.relationTypes = new RelationTypes();
     }
 
     /**
@@ -78,31 +78,35 @@ class Story {
             return null;
         }
     }
-    addRelation( nameFrom, nameTo ) {
+
+    addRelationType( name ) {
+        this.relationTypes.addType( name );
+    }
+    
+    addRelation( nameFrom, nameTo, relationName ) {
         let idFrom = this.findPersonId( nameFrom );
         let idTo = this.findPersonId( nameTo );
         if (idFrom != null && idTo != null) {
-            this.edges.add( {
-                from : idFrom,
-                to : idTo,
-                arrows : 'to',
-                label : 'pousse'
-            });
+            let relation = this.relationTypes.buildRelation( idFrom,
+                                                             idTo,
+                                                             relationName
+                                                           );
+            this.edges.add( relation ) ;
             console.log( "Edge "+idFrom+" -> "+idTo );
         }
         else {
             console.log( "Unknown id : "+idFrom+" -> "+idTo );
         }
     }
-
-    debugListNodes() {
-        this.nodes.forEach( function( item ) {
-            console.log( "Node type=",typeof(item),item );
-        });
-    }
-    debugListEdges() {
-        this.edges.forEach( function( item ) {
-            console.log( "Edge ",item );
+    /**
+     * Classical uses:
+     * story.debugList( 'Node', story.nodes )
+     * story.debugList( 'Edge', story.edges )
+     * story.debugList( 'RelType', story.relationTypes.types )
+     */
+    debugList( name, dataset) {
+        dataset.forEach( function( item ) {
+            console.log( name+" type=",typeof(item),item );
         });
     }
 }

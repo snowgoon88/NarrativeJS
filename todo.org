@@ -1,3 +1,4 @@
+* CURRENT : edit relationTypes [[editRelType]]
 * CURRENT : redisplay after adding node using [[add_node]]
 * CURRENT : [[add_node]] while preserving order
 * Fonctionnalités
@@ -5,13 +6,17 @@
 ** Centrer sur une sélection
 ** assigner les sélections à des variables (ou des recherches)
 *** Ce qui veut dire mettre à jour quand on delete !
-* [1/2] New Story
+* [1/3] New Story
 ** class Story = { nodes, edges }
 *** class NodePerson, style depends on fields
 ** DONE [0/0] REACT Component to set physics details (physics.barnesHut)
 <<barneshut>>
 *** Btn to change physics options
 *** slider 
+** TODO [0/2] RelationType
+*** TODO edit
+<<editRelType>>
+*** TODO make REACT Component to edit ?
 ** TODO [0/2] UseCase
 *** TODO center on one Node
 *** TODO center on a selection of Nodes
