@@ -75,6 +75,11 @@ let cmdList02 = [
     "story.addRelation( 'Node 2', 'Node 1', 'Pousse' )",
 ];
 
+let cmdList03 = [
+    "story.addRelationType( 'Pousse' )",
+    "story.addRelationType( 'déteste' )",
+];
+
 let cmdList = cmdList01;
 let cmdIndex = 0;
 function nextCmd() {
@@ -93,3 +98,4 @@ function batchCmd( cmdList ) {
         eval( cmdList[i] );
     }
 }
+batchCmd( cmdList03 );
