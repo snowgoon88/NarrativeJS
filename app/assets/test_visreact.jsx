@@ -4,6 +4,11 @@
 // require : story.js (phys_options), physics_comp.js
 // *****************************************************************************
 
+const exampleRelation = {
+    name: 'Pousse',
+    from: 0,
+    to: 1
+};
 
 const element = <div>
   <PhysicsComp
@@ -12,19 +17,13 @@ const element = <div>
     maxVelocity={phys_options.maxVelocity}
   />
   <RelationComp
-    name="ESSAI"
-    types={story.relationTypes.types}
-    fromName="n_FROM"
-    toName="n_TO"
+    relation={exampleRelation}
   />
   </div>;
 
 const reactRel = <div>
-  <RelationComp
-    name="ESSAI"
-    types={story.relationTypes.types}
-    fromName="n_FROM"
-    toName="n_TO"
+    <RelationComp
+    relation={null}
   />
   </div>;
 
@@ -43,3 +42,22 @@ ReactDOM.render(
  * 
  * f the React element was previously rendered into container, this will perform an update on it and only mutate the DOM as necessary to reflect the latest React element.
  *                                                                                   If the optional callback is provided, it will be executed after the component is rendered or updated.      */                                                
+
+// callback when a Story edge (relation) is selected
+network.on( 'selectEdge', function( event ) {
+    console.log( 'event.edges=',event.edges );
+    let selEdge = story.edges.get( event.edges[0] );
+    console.log( 'selEdge=', selEdge );
+    let fromName = story.nodes.get(selEdge.from).label;
+    let toName = story.nodes.get(selEdge.to).label;
+    let reactEdge =
+        <div>
+            <RelationComp
+                relation={selEdge}
+            />
+        </div>;
+    ReactDOM.render(
+        reactEdge,
+        document.getElementById( 'react_relation' )
+    );
+});

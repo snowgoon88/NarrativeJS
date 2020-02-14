@@ -49,6 +49,20 @@ class RelationTypes {
         delete relation.id;
         return relation;
     }
+    changeRelation( relation, relationType ) {
+        // memorize existing id
+        let relationId = relation.id;
+        // check RelationType exists
+        let relType = this.findRelType( relationType );
+        if( relType == null ) {
+            // relationType is not found
+            return null;
+        }
+        relation = Object.assign( relation, relType );
+        // Restore id (overwritten by relType.id)
+        relation.id = relationId;
+        return relation;
+    }   
     findRelType( name ) {
         let foundRel = this.types.get( {
             filter: function (item) {

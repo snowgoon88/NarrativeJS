@@ -98,4 +98,4 @@ function batchCmd( cmdList ) {
         eval( cmdList[i] );
     }
 }
-batchCmd( cmdList03 );
+batchCmd( cmdList02 );

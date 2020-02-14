@@ -98,6 +98,23 @@ class Story {
             console.log( "Unknown id : "+idFrom+" -> "+idTo );
         }
     }
+    editRelation( id, fieldsToChange ) {
+        let rel = this.edges.get( id );
+        for( const [key, value] of Object.entries( fieldsToChange )) {
+            if (key.localeCompare( 'name' ) == 0) {
+                // tries to change relationType to name
+                rel = this.relationTypes.changeRelation( rel, value );
+                if (rel == null) {
+                    return;
+                }
+            }
+            else {
+                rel[key] = value;
+            }
+        }
+        console.log( "EDIT = ", rel );
+        this.edges.update( rel );
+    }
     /**
      * Classical uses:
      * story.debugList( 'Node', story.nodes )
