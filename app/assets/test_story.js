@@ -30,7 +30,10 @@ const phys_options = {
     maxVelocity : 15
 };
 let options = {
-    physics : phys_options
+    physics : phys_options,
+    interaction : {
+        selectConnectedEdges : false
+    }
 };
 //let network = new vis.Network( container, { nodes : story.nodes }, options );
 let network = new vis.Network( container, story, options );

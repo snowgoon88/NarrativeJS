@@ -48,8 +48,8 @@ network.on( 'selectEdge', function( event ) {
     console.log( 'event.edges=',event.edges );
     let selEdge = story.edges.get( event.edges[0] );
     console.log( 'selEdge=', selEdge );
-    let fromName = story.nodes.get(selEdge.from).label;
-    let toName = story.nodes.get(selEdge.to).label;
+    //let fromName = story.nodes.get(selEdge.from).label;
+    //let toName = story.nodes.get(selEdge.to).label;
     let reactEdge =
         <div>
             <RelationComp
@@ -60,4 +60,19 @@ network.on( 'selectEdge', function( event ) {
         reactEdge,
         document.getElementById( 'react_relation' )
     );
+});
+// callback when a Story NodePerson (person) is selected
+network.on( 'selectNode', function( event ) {
+    let selPerson = story.nodes.get( event.nodes[0] );
+    let reactPerson =
+        <div>
+            <PersonComp
+                person={selPerson}
+            />
+        </div>;
+    ReactDOM.render(
+        reactPerson,
+        document.getElementById( 'react_relation' )
+    );
+    
 });

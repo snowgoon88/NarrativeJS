@@ -67,9 +67,6 @@ let styleRules = {
         }
     }
 }
-            
-        
-        
 
 class NodePerson {
     /**

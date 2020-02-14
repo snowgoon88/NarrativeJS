@@ -1,4 +1,4 @@
-* CURRENT : 
+* CURRENT : after display, change [[reactPerson]]
 * CURRENT : redisplay after adding node using [[add_node]]
 * CURRENT : [[add_node]] while preserving order
 * Fonctionnalités
@@ -13,6 +13,7 @@
 ** TODO [0/2] Person
 *** TODO edit
 *** TODO React Component
+<<reactPerson>>
 ** DONE [0/0] REACT Component to set physics details (physics.barnesHut)
 <<barneshut>>
 *** Btn to change physics options
