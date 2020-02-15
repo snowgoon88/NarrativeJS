@@ -1,4 +1,4 @@
-* CURRENT : after display, change [[reactPerson]]
+* CURRENT : 
 * CURRENT : redisplay after adding node using [[add_node]]
 * CURRENT : [[add_node]] while preserving order
 * Fonctionnalités
@@ -6,13 +6,15 @@
 ** Centrer sur une sélection
 ** assigner les sélections à des variables (ou des recherches)
 *** Ce qui veut dire mettre à jour quand on delete !
-* [2/4] New Story
+* [3/5] New Story
 ** class Story = { nodes, edges, relationTypes }
 *** class NodePerson, style depends on fields
 *** class RelationTypes, types of Relations
-** TODO [0/2] Person
-*** TODO edit
-*** TODO React Component
+** TODO When unselected (edge or node), nothing happens
+see Events : select, click, deselectNode, deselectEdge
+** DONE [2/2] Person
+*** DONE edit
+*** DONE React Component
 <<reactPerson>>
 ** DONE [0/0] REACT Component to set physics details (physics.barnesHut)
 <<barneshut>>

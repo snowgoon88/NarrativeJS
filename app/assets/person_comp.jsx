@@ -31,9 +31,9 @@ class PersonComp extends React.Component {
         const person = this.props.person;
         if (person != null) {
             this.state = {
-                personName : person.name,
-                personSex : person.sex,
-                personClan : person.clan
+                name : person.name,
+                sex : person.sex,
+                clan : person.clan
             }
         }
         else {
@@ -46,36 +46,41 @@ class PersonComp extends React.Component {
             if (this.props.person != null) {
                 const person = this.props.person;
                 this.setState( {
-                    personName : person.name,
-                    personSex : person.sex,
-                    personClan : person.clan
+                    name : person.name,
+                    sex : person.sex,
+                    clan : person.clan
                 });
             }
         }                    
     }
     handleChange( keyName, value ) {
+        const newState = {};
+        newState[keyName] = value;
+        story.editPerson( this.state.name, newState );
+        this.setState( newState );
     }
+    
     render() {
         return (
             <table>
             <tbody>
             <TextComp
             title="Name"
-            keyName="personName"
+            keyName="name"
             onValueChange={this.handleChange}
-            value={this.state.personName}
+            value={this.state.name}
             />
             <TextComp
             title="Sex"
-            keyName="personSex"
+            keyName="sex"
             onValueChange={this.handleChange}
-            value={this.state.personSex}
+            value={this.state.sex}
             />
             <TextComp
             title="Clan"
-            keyName="personClan"
+            keyName="clan"
             onValueChange={this.handleChange}
-            value={this.state.personClan}
+            value={this.state.clan}
             />
             </tbody>
             </table>

@@ -63,7 +63,9 @@ network.on( 'selectEdge', function( event ) {
 });
 // callback when a Story NodePerson (person) is selected
 network.on( 'selectNode', function( event ) {
+    console.log( 'event.nodes=',event.nodes );
     let selPerson = story.nodes.get( event.nodes[0] );
+    console.log( 'selPerson=',selPerson );
     let reactPerson =
         <div>
             <PersonComp

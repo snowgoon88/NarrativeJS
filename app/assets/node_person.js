@@ -102,7 +102,8 @@ class NodePerson {
         for (const [key, value] of Object.entries( fieldsToChange )) {
             if (key.localeCompare( 'name' ) == 0 ) {
                 this.name = value;
-                this.label = '<i>'+value+'</i><i class="fas fa-skull"></i>';
+                //this.label = '<i>'+value+'</i><i class="fas fa-skull"></i>';
+                this.label = '<i>'+value+'</i>';
             }
             else if (key.localeCompare( 'sex' ) == 0 ) {
                 this.sex = value;
