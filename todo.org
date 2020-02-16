@@ -1,3 +1,4 @@
+* CURRENT : 
 * CURRENT : redisplay after adding node using [[add_node]]
 * CURRENT : [[add_node]] while preserving order
 * Fonctionnalités
@@ -5,6 +6,33 @@
 ** Centrer sur une sélection
 ** assigner les sélections à des variables (ou des recherches)
 *** Ce qui veut dire mettre à jour quand on delete !
+* [3/5] New Story
+** class Story = { nodes, edges, relationTypes }
+*** class NodePerson, style depends on fields
+*** class RelationTypes, types of Relations
+** TODO When unselected (edge or node), nothing happens
+see Events : select, click, deselectNode, deselectEdge
+** DONE [2/2] Person
+*** DONE edit
+*** DONE React Component
+<<reactPerson>>
+** DONE [0/0] REACT Component to set physics details (physics.barnesHut)
+<<barneshut>>
+*** Btn to change physics options
+*** slider 
+** DONE [2/2] RelationType
+*** DONE edit
+<<editRelType>>
+*** DONE make REACT Component to edit ?
+** TODO [0/2] UseCase
+*** TODO :addperson, :ad [name="] [sex="] [clan="]
+avec une signature du style
+token : [':addperson', ':ad']
+signature : 'TOKEN name=STRING sex=FIXED clan=LIST' 
+
+création, centrer sur lui, edition ?
+*** TODO center on one Node
+*** center on a selection of Nodes
 * [1/1] REACT
 ** DONE simple standalone REACT avec Hello World => app_react.js
 ** apprendre avec https://reactjs.org/docs/hello-world.html
@@ -97,7 +125,7 @@ http://codewinds.com/blog/2015-04-02-emacs-flycheck-eslint-jsx.html#improving_th
 npm install -g eslint babel-eslint eslint-plugin-react
 create ~/.eslintrc
 * Features
-** DONE CONFIG : config --mode|-m browser|desktop <name> (where index_name.html exists)
+** DONE NEUTRALINO CONFIG : config --mode|-m browser|desktop <name> (where index_name.html exists)
 crée liens dans app
 - index.html -> index_name.html
 - settings.json -> settings-[browser|app].json
