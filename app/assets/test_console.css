@@ -1,0 +1,10 @@
+.border {
+    border-style: solid;
+}
+.input_area {
+    width: 100%;
+}
+
+#info {
+    background-color: lightgray;
+}

@@ -7,6 +7,7 @@
 ** assigner les sélections à des variables (ou des recherches)
 *** Ce qui veut dire mettre à jour quand on delete !
 * [3/5] New Story
+** Key / Event handler in React => console_comp.jsx 
 ** class Story = { nodes, edges, relationTypes }
 *** class NodePerson, style depends on fields
 *** class RelationTypes, types of Relations
