@@ -362,9 +362,9 @@ class Terminal {
         this.ensureValidCursor();
     }
     removeCharacters( nbChar ) {
-        this.text = this.text.slice( 0, this.cursorPos-nbChar).concat(
+        this.text = this.text.slice( 0, this.cursorPos+nbChar).concat(
             this.text.slice( this.cursorPos ) );
-        this.cursorPos -= nbChar;
+        this.cursorPos += nbChar;
         this.ensureValidCursor();
     }
     moveCursorRelative( depl ) {
@@ -419,7 +419,7 @@ function keyEventHandler(event) {
         term.moveCursorRelative( +1 );
     }
     else if (key == "Backspace" ) {
-        term.removeCharacters( 1 );
+        term.removeCharacters( -1 );
     }
     else if (key != "Shift") {
         term.addText( key );
