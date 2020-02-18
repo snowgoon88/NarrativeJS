@@ -349,6 +349,9 @@ ReactDOM.render(
 // *************************************************************** Fake Textarea
 // *****************************************************************************
 let fakeNode = document.getElementById( 'fake_textarea' );
+let fakePopupNode = document.getElementById( 'fake_popup' );
+fakePopupNode.style.display = 'block';
+let fakeInfoNode = document.getElementById( 'fake_info' );
 
 class Terminal {
     constructor() {
@@ -377,7 +380,7 @@ class Terminal {
     }
 
     updateHTML( elem ) {
-       // Erase actual content
+        // Erase actual content
         while (elem.firstChild) {
             elem.removeChild( elem.lastChild );
         }
@@ -403,6 +406,31 @@ class Terminal {
         span.innerHTML = this.text.slice( this.cursorPos+1 );
         elem.appendChild( span );
     }
+
+    getCaretCoordinates( elem ) {
+        // find some properties of elem
+        let computed = window.getComputedStyle( elem );
+        // find the cursor (ie, span of class "blinking_insert"
+        let cursor = elem.querySelector( '.blinking_insert' );
+
+        console.log( "CURSOR AT=", cursor );
+        console.log( "ELEM   AT=", computed );
+
+        let coordinates = {
+            top: cursor.offsetTop + parseInt(computed['borderTopWidth']),
+            left: cursor.offsetLeft + parseInt(computed['borderLeftWidth']),
+            width: cursor.offsetWidth,
+            height: cursor.offsetHeight
+        };
+        return coordinates;
+    }
+
+    updatePopup( elem ) {
+        let coord = this.getCaretCoordinates( fakeNode );
+        elem.innerHTML = "caret at "+coord.left+" x "+coord.top+" ["+coord.width+" x "+coord.height+"]";
+        elem.style.left = coord.left + coord.width + 'px';
+	elem.style.top = coord.top + coord.height + 'px';
+    }
 }
 
 let term = new Terminal();
@@ -421,11 +449,28 @@ function keyEventHandler(event) {
     else if (key == "Backspace" ) {
         term.removeCharacters( -1 );
     }
+    else if (key != "Dead") {
+        // accent, pass on
+    }
     else if (key != "Shift") {
         term.addText( key );
     }
     console.log( "TERM =",term );
     term.updateHTML( fakeNode );
+
+    /* let caret = getCaretCoordinates(
+     *     fakeNode,
+     *     term.cursorPos
+     * );
+     * fakeInfoNode.innerHTML = "caret at "+caret.left+" x "+caret.top;*/
+    /* let styleSize = getComputedStyle(fakeNode).getPropertyValue('font-size');
+     * let fontSize = parseFloat(styleSize);
+     * fakeInfoNode.innerHTML = "Font ="+fontSize;*/
+
+    let coord = term.getCaretCoordinates( fakeNode );
+    fakeInfoNode.innerHTML = "caret at "+coord.left+" x "+coord.top+" ["+coord.width+" x "+coord.height+"]";
+
+    term.updatePopup( fakePopupNode );
     
     event.preventDefault();
 }
@@ -438,6 +483,7 @@ function keypressEventHandler(event) {
     term.addText( keyChar );
     console.log( "TERM =",term );
     term.updateHTML( fakeNode );
+    term.updatePopup( fakePopupNode );
 }
 fakeNode.addEventListener( 'keydown', keyEventHandler );
 fakeNode.addEventListener( 'keypress', keypressEventHandler );

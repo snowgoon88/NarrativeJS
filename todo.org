@@ -1,4 +1,4 @@
-* CURRENT : 
+* CURRENT : clean up Terminal, in React ???
 * CURRENT : redisplay after adding node using [[add_node]]
 * CURRENT : [[add_node]] while preserving order
 * Fonctionnalités
@@ -6,6 +6,13 @@
 ** Centrer sur une sélection
 ** assigner les sélections à des variables (ou des recherches)
 *** Ce qui veut dire mettre à jour quand on delete !
+* TODO [3/5] Terminal
+** DONE use div + editableContent to simulate terminal
+** DONE arrow Left / Right, Backspace, Add
+** DONE get Screen coordinate of cursor
+** TODO clean up
+** TODO [0/1] add completion
+*** TODO beware, position of popup when on the right
 * [3/5] New Story
 ** Key / Event handler in React => console_comp.jsx 
 ** class Story = { nodes, edges, relationTypes }

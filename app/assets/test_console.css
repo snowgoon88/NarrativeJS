@@ -1,3 +1,6 @@
+div {
+    position: relative; /* relative to closest ancestor */
+}
 .border {
     border-style: solid;
 }
@@ -34,11 +37,20 @@
 }
 
 #fake_textarea {
+    /*position: absolute;    /* relative to closest ancestor */
     font-family: monospace;
     width: 100%;
     height: 6em;
 }
+#fake_popup {
+    position: absolute;
+    display: none;      /* hidden by default */
+    background-color: lightblue;
+    box-sizing : border-box;
+    z-index: 2; 
+}
 .blinking_insert {
+    /*position: absolute;    /* relative to closest ancestor */
     animation: blinkingBack 1s infinite;
 }
 .blinking_over {
