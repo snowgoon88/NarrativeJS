@@ -344,3 +344,110 @@ ReactDOM.render(
     consoleReact,
     document.getElementById( 'react_root' )
 );
+
+// *****************************************************************************
+// *************************************************************** Fake Textarea
+// *****************************************************************************
+let fakeNode = document.getElementById( 'fake_textarea' );
+
+class Terminal {
+    constructor() {
+        this.text = '';
+        this.cursorPos = 0;
+    }
+    addText( msg ) {
+        this.text = this.text.slice(0, this.cursorPos).concat(
+            msg ).concat( this.text.slice( this.cursorPos ) );
+        this.cursorPos += msg.length;
+        this.ensureValidCursor();
+    }
+    removeCharacters( nbChar ) {
+        this.text = this.text.slice( 0, this.cursorPos-nbChar).concat(
+            this.text.slice( this.cursorPos ) );
+        this.cursorPos -= nbChar;
+        this.ensureValidCursor();
+    }
+    moveCursorRelative( depl ) {
+        this.cursorPos += depl;
+        this.ensureValidCursor();
+    }
+    ensureValidCursor() {
+        if (this.cursorPos < 0) this.cursorPos = 0;
+        if (this.cursorPos > this.text.length) this.cursorPos = this.text.length;
+    }
+
+    updateHTML( elem ) {
+       // Erase actual content
+        while (elem.firstChild) {
+            elem.removeChild( elem.lastChild );
+        }
+
+        // neutral span start -> cursor
+        let span = document.createElement( 'span' );
+        span.innerHTML = this.text.slice( 0, this.cursorPos );
+        elem.appendChild( span );
+
+        // blinkingBack at cursor
+        let blink = document.createElement( 'span' );
+        blink.classList.add( 'blinking_insert' );
+        if (this.cursorPos >= this.text.length) {
+            blink.innerHTML = '&nbsp;';
+        }
+        else {
+            blink.innerHTML = this.text.substr( this.cursorPos, 1);
+        }
+        elem.appendChild( blink );
+
+        // neutral span cursor -> end
+        span = document.createElement( 'span' );
+        span.innerHTML = this.text.slice( this.cursorPos+1 );
+        elem.appendChild( span );
+    }
+}
+
+let term = new Terminal();
+term.updateHTML( fakeNode );
+
+function keyEventHandler(event) {
+    console.log( "KEY ", event);
+    let key = event.key;
+
+    if (key == "ArrowLeft" ) {
+        term.moveCursorRelative( -1 );
+    }
+    else if (key == "ArrowRight" ) {
+        term.moveCursorRelative( +1 );
+    }
+    else if (key == "Backspace" ) {
+        term.removeCharacters( 1 );
+    }
+    else if (key != "Shift") {
+        term.addText( key );
+    }
+    console.log( "TERM =",term );
+    term.updateHTML( fakeNode );
+    
+    event.preventDefault();
+}
+function keypressEventHandler(event) {
+    let keyCode = event.keyCode || event.which;
+    let keyChar = String.fromCharCode(keyCode);
+    
+    console.log( "KEYPRESS ", keyCode, keyChar, event);
+    
+    term.addText( keyChar );
+    console.log( "TERM =",term );
+    term.updateHTML( fakeNode );
+}
+fakeNode.addEventListener( 'keydown', keyEventHandler );
+fakeNode.addEventListener( 'keypress', keypressEventHandler );
+
+function selectEventHandler(event) {
+    console.log( "SELECT ", event.target.selectionStart, event.target.selectionEnd, event );
+}
+fakeNode.addEventListener( 'select', selectEventHandler );
+
+
+/* console.log( "TERM =",term );
+ * term.addText( 'un' );
+ * console.log( "+un ", term );*/
