@@ -5,6 +5,30 @@
     width: 100%;
 }
 
+#completion_popup {
+    position: absolute;
+    display: none;      /* hidden by default */
+    background-color: #ffffff;
+    box-sizing : border-box;
+    z-index: 2; 
+}
+.completion_list {
+    list-style-type:none;
+    min-width: 220px;
+    border: 1px solid #bbb;
+    background-color: #ffffff;
+    padding: 7px 0;
+    margin: 4px 0 0 0;
+}
+.completion_list li[patt-selected="true"] {
+    color:  #ffffff;
+    background-color: #5778d8;
+}
+.dropdown_list li[patt-selected="true"] mark {
+    background: hsl(86, 100%, 21%);
+    color: inherit;
+}
+
 #info {
     background-color: lightgray;
 }
