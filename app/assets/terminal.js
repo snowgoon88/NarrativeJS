@@ -52,9 +52,15 @@ class Terminal {
      * negative value means remove BEFORE cursorPos 
      */
     removeCharacters( nbChar ) {
-        this.text = this.text.slice( 0, this.cursorPos+nbChar).concat(
-            this.text.slice( this.cursorPos ) );
-        this.cursorPos += nbChar;
+        if (nbChar < 0) {
+            this.text = this.text.slice( 0, this.cursorPos+nbChar).concat(
+                this.text.slice( this.cursorPos ) );
+            this.cursorPos += nbChar;
+        }
+        else {
+            this.text = this.text.slice( 0, this.cursorPos).concat(
+                this.text.slice( this.cursorPos+nbChar ) );
+            }
         this.ensureValidCursor();
     }
     /** Move cursor, relative to current cursorPos */
@@ -71,7 +77,7 @@ class Terminal {
     /** handle keydown (keypress is/will be deprecated)
      */
     handleKeyDown( event ) {
-        //console.log( "DOWN evt=", event );
+        console.log( "DOWN evt=", event );
         // unlike keypress, Shif+A generates 2 events...
         let key = event.key;
         
@@ -84,7 +90,18 @@ class Terminal {
         else if (key == "Backspace" ) {
             this.removeCharacters( -1 );
         }
-        else if (["Dead", "Compose", "Process"].includes( key) ) {
+        else if (event.ctrlKey) {
+            if (key == "a") {
+                this.moveCursorRelative( -this.cursorPos );
+            }
+            else if (key == "e") {
+                this.moveCursorRelative( this.text.length );
+            }
+            else if (key == "k") {
+                this.removeCharacters( this.text.length );
+            }
+        }
+        else if (["Dead", "Compose", "Process", "Control"].includes( key) ) {
             //console.log( "STOP" );
         }
         else if (key != "Shift") {
