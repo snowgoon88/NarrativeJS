@@ -345,155 +345,21 @@ ReactDOM.render(
     document.getElementById( 'react_root' )
 );
 
+
 // *****************************************************************************
-// *************************************************************** Fake Textarea
+// ******************************************************************** Terminal
 // *****************************************************************************
-let fakeNode = document.getElementById( 'fake_textarea' );
-let fakePopupNode = document.getElementById( 'fake_popup' );
-fakePopupNode.style.display = 'block';
-let fakeInfoNode = document.getElementById( 'fake_info' );
+let terminalNode = document.getElementById( 'terminal' );
+let terminal = new Terminal( terminalNode );
 
-class Terminal {
-    constructor() {
-        this.text = '';
-        this.cursorPos = 0;
-    }
-    addText( msg ) {
-        this.text = this.text.slice(0, this.cursorPos).concat(
-            msg ).concat( this.text.slice( this.cursorPos ) );
-        this.cursorPos += msg.length;
-        this.ensureValidCursor();
-    }
-    removeCharacters( nbChar ) {
-        this.text = this.text.slice( 0, this.cursorPos+nbChar).concat(
-            this.text.slice( this.cursorPos ) );
-        this.cursorPos += nbChar;
-        this.ensureValidCursor();
-    }
-    moveCursorRelative( depl ) {
-        this.cursorPos += depl;
-        this.ensureValidCursor();
-    }
-    ensureValidCursor() {
-        if (this.cursorPos < 0) this.cursorPos = 0;
-        if (this.cursorPos > this.text.length) this.cursorPos = this.text.length;
-    }
-
-    updateHTML( elem ) {
-        // Erase actual content
-        while (elem.firstChild) {
-            elem.removeChild( elem.lastChild );
-        }
-
-        // neutral span start -> cursor
-        let span = document.createElement( 'span' );
-        span.innerHTML = this.text.slice( 0, this.cursorPos );
-        elem.appendChild( span );
-
-        // blinkingBack at cursor
-        let blink = document.createElement( 'span' );
-        blink.classList.add( 'blinking_insert' );
-        if (this.cursorPos >= this.text.length) {
-            blink.innerHTML = '&nbsp;';
-        }
-        else {
-            blink.innerHTML = this.text.substr( this.cursorPos, 1);
-        }
-        elem.appendChild( blink );
-
-        // neutral span cursor -> end
-        span = document.createElement( 'span' );
-        span.innerHTML = this.text.slice( this.cursorPos+1 );
-        elem.appendChild( span );
-    }
-
-    getCaretCoordinates( elem ) {
-        // find some properties of elem
-        let computed = window.getComputedStyle( elem );
-        // find the cursor (ie, span of class "blinking_insert"
-        let cursor = elem.querySelector( '.blinking_insert' );
-
-        console.log( "CURSOR AT=", cursor );
-        console.log( "ELEM   AT=", computed );
-
-        let coordinates = {
-            top: cursor.offsetTop + parseInt(computed['borderTopWidth']),
-            left: cursor.offsetLeft + parseInt(computed['borderLeftWidth']),
-            width: cursor.offsetWidth,
-            height: cursor.offsetHeight
-        };
-        return coordinates;
-    }
-
-    updatePopup( elem ) {
-        let coord = this.getCaretCoordinates( fakeNode );
-        elem.innerHTML = "caret at "+coord.left+" x "+coord.top+" ["+coord.width+" x "+coord.height+"]";
-        elem.style.left = coord.left + coord.width + 'px';
-	elem.style.top = coord.top + coord.height + 'px';
-    }
+function eventHandler( event ) {
+    console.log( "EVENT=",event);
+}
+//terminalNode.addEventListener( 'input', eventHandler );
+function handleComposition(event) {
+    console.log( "COMP ",event.type, event.data );
 }
 
-let term = new Terminal();
-term.updateHTML( fakeNode );
-
-function keyEventHandler(event) {
-    console.log( "KEY ", event);
-    let key = event.key;
-
-    if (key == "ArrowLeft" ) {
-        term.moveCursorRelative( -1 );
-    }
-    else if (key == "ArrowRight" ) {
-        term.moveCursorRelative( +1 );
-    }
-    else if (key == "Backspace" ) {
-        term.removeCharacters( -1 );
-    }
-    else if (key != "Dead") {
-        // accent, pass on
-    }
-    else if (key != "Shift") {
-        term.addText( key );
-    }
-    console.log( "TERM =",term );
-    term.updateHTML( fakeNode );
-
-    /* let caret = getCaretCoordinates(
-     *     fakeNode,
-     *     term.cursorPos
-     * );
-     * fakeInfoNode.innerHTML = "caret at "+caret.left+" x "+caret.top;*/
-    /* let styleSize = getComputedStyle(fakeNode).getPropertyValue('font-size');
-     * let fontSize = parseFloat(styleSize);
-     * fakeInfoNode.innerHTML = "Font ="+fontSize;*/
-
-    let coord = term.getCaretCoordinates( fakeNode );
-    fakeInfoNode.innerHTML = "caret at "+coord.left+" x "+coord.top+" ["+coord.width+" x "+coord.height+"]";
-
-    term.updatePopup( fakePopupNode );
-    
-    event.preventDefault();
-}
-function keypressEventHandler(event) {
-    let keyCode = event.keyCode || event.which;
-    let keyChar = String.fromCharCode(keyCode);
-    
-    console.log( "KEYPRESS ", keyCode, keyChar, event);
-    
-    term.addText( keyChar );
-    console.log( "TERM =",term );
-    term.updateHTML( fakeNode );
-    term.updatePopup( fakePopupNode );
-}
-fakeNode.addEventListener( 'keydown', keyEventHandler );
-fakeNode.addEventListener( 'keypress', keypressEventHandler );
-
-function selectEventHandler(event) {
-    console.log( "SELECT ", event.target.selectionStart, event.target.selectionEnd, event );
-}
-fakeNode.addEventListener( 'select', selectEventHandler );
-
-
-/* console.log( "TERM =",term );
- * term.addText( 'un' );
- * console.log( "+un ", term );*/
+/* terminalNode.addEventListener('compositionstart', handleComposition);
+ * terminalNode.addEventListener('compositionupdate', handleComposition);
+ * terminalNode.addEventListener('compositionend', handleComposition);*/

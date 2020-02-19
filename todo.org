@@ -6,10 +6,11 @@
 ** Centrer sur une sélection
 ** assigner les sélections à des variables (ou des recherches)
 *** Ce qui veut dire mettre à jour quand on delete !
-* TODO [3/5] Terminal
+* TODO [4/6] Terminal
 ** DONE use div + editableContent to simulate terminal
 ** DONE arrow Left / Right, Backspace, Add
 ** DONE get Screen coordinate of cursor
+** DONE deal this composed characters
 ** TODO clean up
 ** TODO [0/1] add completion
 *** TODO beware, position of popup when on the right
