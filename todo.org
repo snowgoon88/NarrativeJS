@@ -12,7 +12,10 @@
 ** DONE get Screen coordinate of cursor
 ** DONE deal this composed characters
 ** TODO clean up
-** TODO [0/1] add completion
+** TODO [1/4] add completion
+*** DONE BASIC $object and "object" TOKEN recognized and completed if EXIST
+*** TODO When ended, validation and new type of TOKEN (command)
+*** TODO Enable/Disable hint or completion with Ctrl+ENTER
 *** TODO beware, position of popup when on the right
 * [3/5] New Story
 ** Key / Event handler in React => console_comp.jsx 

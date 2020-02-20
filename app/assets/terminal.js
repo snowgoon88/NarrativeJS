@@ -31,6 +31,9 @@ class Terminal {
         // and some internal values
         this.text = '';
         this.cursorPos = 0;
+        this.hasChanged= false;
+
+        this.cmdLine = new ObjectToken();
 
         this.containerE.addEventListener( 'keydown',
                                           this.handleKeyDown.bind(this) );
@@ -47,6 +50,7 @@ class Terminal {
             msg ).concat( this.text.slice( this.cursorPos ) );
         this.cursorPos += msg.length;
         this.ensureValidCursor();
+        this.hasChanged = true;
     }
     /** Remove nbChar caracters at cursorPos
      * negative value means remove BEFORE cursorPos 
@@ -60,12 +64,14 @@ class Terminal {
         else {
             this.text = this.text.slice( 0, this.cursorPos).concat(
                 this.text.slice( this.cursorPos+nbChar ) );
-            }
+        }
+        this.hasChanged = true;
         this.ensureValidCursor();
     }
     /** Move cursor, relative to current cursorPos */
     moveCursorRelative( depl ) {
         this.cursorPos += depl;
+        this.hasChanged = true;
         this.ensureValidCursor();
     }
     /** 0 <= cursorPos <= text.length */ 
@@ -100,6 +106,18 @@ class Terminal {
             else if (key == "k") {
                 this.removeCharacters( this.text.length );
             }
+        }
+        else if (key == "Tab") {
+            let completion = this.cmdLine.validActualCompletion();
+            console.log( "TO INSERT",completion );
+            this.removeCharacters( -completion.pattern.length );
+            this.addText( completion.text );
+        }
+        else if (key == "ArrowUp") {
+            this.cmdLine.moveSelection( -1 );
+        }
+        else if (key == "ArrowDown") {
+            this.cmdLine.moveSelection( +1 );
         }
         else if (["Dead", "Compose", "Process", "Control"].includes( key) ) {
             //console.log( "STOP" );
@@ -138,8 +156,14 @@ class Terminal {
     handleKeyUp( event ) {
         // console.log( "UP evt=", event );
         // console.log( "  this=", this.text, "/", this.cursorPos );
+
+        if (this.hasChanged) {
+            this.cmdLine.lookForPatternInText( this.text, this.cursorPos );
+            this.hasChanged = false;
+        }
+        
         this.updateHTML();
-        this.updatePopup();
+        this.updatePopupWithElement( this.cmdLine.getOverlayElement( 5 ));
     }
     /** Update terminal Element 
      * Erase beforeE, cursorE and afterE 
@@ -192,6 +216,14 @@ class Terminal {
     /** update popupE position
      * BASIC : display carret position
      */
+    updatePopupWithElement( elem ) {
+        this.popupE.innerHTML = '';
+        this.popupE.appendChild( elem );
+        
+        let coord = this.getCaretCoordinates();
+        this.popupE.style.left = coord.left + coord.width + 'px';
+	this.popupE.style.top = coord.top + coord.height + 'px';
+    }
     updatePopup() {
         let coord = this.getCaretCoordinates();
         this.popupE.innerHTML = "caret at "+coord.left+" x "+coord.top+" ["+coord.width+" x "+coord.height+"]";
