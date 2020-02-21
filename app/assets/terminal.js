@@ -35,7 +35,7 @@ class Terminal {
         this.cursorPos = 0;
         this.hasChanged= false;
 
-        this.cmdLine = new ObjectToken();
+        this.cmdLine = new CommandLine();
 
         this.containerE.addEventListener( 'keydown',
                                           this.handleKeyDown.bind(this) );
@@ -110,16 +110,16 @@ class Terminal {
             }
         }
         else if (key == "Tab") {
-            let completion = this.cmdLine.validActualCompletion();
+            let completion = this.cmdLine.currentToken.validActualCompletion();
             console.log( "TO INSERT",completion );
             this.removeCharacters( -completion.pattern.length );
             this.addText( completion.text );
         }
         else if (key == "ArrowUp") {
-            this.cmdLine.moveSelection( -1 );
+            this.cmdLine.currentToken.moveSelection( -1 );
         }
         else if (key == "ArrowDown") {
-            this.cmdLine.moveSelection( +1 );
+            this.cmdLine.currentToken.moveSelection( +1 );
         }
         else if (["Dead", "Compose", "Process", "Control"].includes( key) ) {
             //console.log( "STOP" );
@@ -160,16 +160,20 @@ class Terminal {
         // console.log( "  this=", this.text, "/", this.cursorPos );
 
         if (this.hasChanged) {
-            this.cmdLine.lookForPatternInText( this.text, this.cursorPos );
+            this.cmdLine.update( this.text, this.cursorPos );
+
             this.hasChanged = false;
         }
-        
+
         this.updateHTML();
-        this.updatePopupWithElement( this.cmdLine.getOverlayElement( 5 ));
+
+        this.popupE.innerHTML = '';
+        this.cmdLine.updatePopup( this.popupE );
+        this.updatePopupPosition();
 
         if (this.infoE) {
-            this.cmdLine.checkValidObject( this.text );
-            this.updateInfoWithElement( this.cmdLine.getInfoElem() );
+            this.infoE.innerHTML = '';
+            this.cmdLine.updateInfo( this.infoE );
         }
     }
     /** Update terminal Element 
@@ -223,10 +227,7 @@ class Terminal {
     /** update popupE position
      * BASIC : display carret position
      */
-    updatePopupWithElement( elem ) {
-        this.popupE.innerHTML = '';
-        this.popupE.appendChild( elem );
-        
+    updatePopupPosition() {
         let coord = this.getCaretCoordinates();
         this.popupE.style.left = coord.left + coord.width + 'px';
 	this.popupE.style.top = coord.top + coord.height + 'px';
@@ -238,7 +239,6 @@ class Terminal {
 	this.popupE.style.top = coord.top + coord.height + 'px';
     }
     updateInfoWithElement( elem ) {
-        this.infoE.innerHTML = '';
         this.infoE.appendChild( elem );
     }
     /*
