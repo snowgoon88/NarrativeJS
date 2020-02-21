@@ -39,13 +39,40 @@ var actionPatterns = [
         enclosing: {start:' ', end:' '}
     }
 ];
+var argsPatterns = [
+    {
+        name: 'string',
+        marker: '="',
+        closing: '"',
+        candidates: null,
+        enclosing: {start:'="', end:'"' }
+    }
+];
+
+var cmdList = [
+    { object: '$persones',
+      actions: {
+          ' add': {
+              args: { name: 'string' },
+              apply: function( args ) {
+                  story.addPerson( args );
+              }
+          }
+      }
+    }
+];
 
 // when completed, will represent an OBJECT
 class ObjectToken {
     constructor( label, patternTypes ) {
         this.label = label;
         this.patternTypes = patternTypes;
-        this.token = {valid:false, from:-1, to:-1};
+        //this.token = {valid:false, from:-1, to:-1};
+        this.valid = false;
+        this.from = -1;
+        this.to = -1;
+        this.token = '',
+        this.type = null;
 
         this.resetPattern();
     }
@@ -215,7 +242,12 @@ class ObjectToken {
     /** Look for validity of Token, starting at position lowerLimit
      */
     checkValid( text, lowerLimit ) {
-        this.token = {valid: false, from:-1, to:-1};
+        this.valid = false;
+        this.from = -1;
+        this.to = -1;
+        this.token = '';
+        this.type = null;
+        
         // look for a valid pattern
         for( let ip=0; ip < this.patternTypes.length; ip++) {
             let patternType = this.patternTypes[ip];
@@ -223,9 +255,11 @@ class ObjectToken {
             // enclose start
             let startPos = text.indexOf( patternType.enclosing.start, lowerLimit );
             if (startPos >= 0) {
-                this.token.from = startPos;
-                this.token.to = text.indexOf( patternType.enclosing.end, startPos+1 );
-                this.token.valid = (this.token.to > this.token.from);
+                this.from = startPos;
+                this.to = text.indexOf( patternType.enclosing.end, startPos+1 );
+                this.valid = (this.to > this.from);
+                this.type = patternType;
+                this.token = text.slice( this.from, this.to );
                 break; // no need to look for other Pattern
             }
         }
@@ -235,10 +269,10 @@ class ObjectToken {
 
         let objectElem = document.createElement( 'span' );
         objectElem.classList.add( "token" );
-        if (this.token.valid) {
+        if (this.valid) {
             objectElem.classList.add( "valid" );
         }
-        objectElem.innerHTML = this.label+' ['+this.token.from+', '+this.token.to+'] '; 
+        objectElem.innerHTML = this.label+' ['+this.from+', '+this.to+'] '; 
         parentElem.appendChild( objectElem );
         
         return parentElem;
@@ -252,6 +286,7 @@ class CommandLine {
     constructor() {
         this.objectToken = new ObjectToken( 'OBJ', objectPatterns );
         this.actionToken = new ObjectToken( 'ACT', actionPatterns );
+        this.argsToken = [];
 
         this.currentToken = this.objectToken;
     }
@@ -261,15 +296,21 @@ class CommandLine {
     update( text, pos ) {
         // Look for Token validity
         this.objectToken.checkValid( text, 0 );
-        this.actionToken.checkValid( text, this.objectToken.token.to);
+        this.actionToken.checkValid( text, this.objectToken.to);
 
-        // Popup will depend on curos position => which TOKEN
+        if (this.objectToken.valid && this.actionToken.valid &&
+            this.argsToken.length == 0 ) {
+            // add argsToken
+            this.appendArgs( text );
+        }
+        
+        // Popup will depend on cursor position => which TOKEN
         this.currentToken = this.objectToken;
-        if (this.actionToken.token.from >= 0 && pos >= this.actionToken.token.from) {
+        if (this.actionToken.from >= 0 && pos >= this.actionToken.from) {
             this.currentToken = this.actionToken;
         }
         //console.log( "CURRENT =",this.currentToken.label, this.actionToken.token.from );
-        let token = this.currentToken.token;
+        let token = this.currentToken;
         let posVirtual = pos - (token.from >= 0 ? token.from : 0 );
         let textSearched = text.slice(
             token.from >= 0 ? token.from : 0,
@@ -278,6 +319,43 @@ class CommandLine {
         
         this.currentToken.lookForPatternInText( textSearched, posVirtual );    
     }
+
+    appendArgs( text ) {
+        let objectT = this.objectToken.token;
+        let actionT = this.actionToken.token;
+        
+        console.log( 'ARGS obj=|'+objectT+'| act=|'+actionT+'|' );
+        for( let ic=0; ic<cmdList.length; ic++) {
+            if (cmdList[ic].object.localeCompare( objectT ) == 0) {
+                let args = cmdList[ic].actions[actionT].args;
+                console.log( '    args=',args );
+
+                for (const [key, type] of Object.entries( args )) {
+                    console.log( "PatType for",key,type );
+                    let patternType = this.patternFromArgsType( key, type );
+                    console.log( "PatTYPE ",patternType );
+                    this.argsToken.push( new ObjectToken( key, patternType ));
+                }
+                       
+                break;
+            }
+        }
+    }
+    patternFromArgsType( argName, argType ) {
+        let patternType = null;
+        for( let ia=0; ia < argsPatterns.length; ia++ ) {
+            console.log( 'compare with',argsPatterns[ia].name );
+            if (argsPatterns[ia].name.localeCompare( argType ) == 0) {
+                patternType = argsPatterns[ia];
+                patternType.marker = argName+patternType.marker;
+                patternType.enclosing.start = patternType.marker;
+
+                return patternType;
+            }
+        }
+        return patternType;
+    }
+    
     updatePopup( popupElement ) {
         popupElement.appendChild( this.currentToken.getOverlayElement( 5 ));
     }
@@ -285,5 +363,8 @@ class CommandLine {
     updateInfo( infoElement ) {
         infoElement.appendChild( this.objectToken.getInfoElem());
         infoElement.appendChild( this.actionToken.getInfoElem());
+        for(let ia = 0; ia < this.argsToken.length; ia++) {
+            infoElement.appendChild( this.argsToken[ia].getInfoElem());
+        }
     }
 }
