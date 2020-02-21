@@ -70,6 +70,12 @@ div {
     border-width : 2px;
     animation: blinkingBorder 1s infinite;
 }
+.token {
+    color: red;
+}
+.valid {
+    color: green;
+}
 @keyframes blinkingBack {
     0%, 100% {
         background-color: black;

@@ -19,19 +19,21 @@ var objectPatterns = [
         marker: '$',
         closing: '',
         candidates: function() { return selections; },
+        enclosing: {start:'$', end:' '}
     },
     {
         name: "person",
         marker: '"',
-        closing: '"',
+        closing: '" ',
         candidates: function() { return persons; },
+        enclosing: {start:'"', end:'" '}
     }
 ];
 
 // when completed, will represent an OBJECT
 class ObjectToken {
     constructor() {
-        this.completed = false;
+        this.objectToken = {valid:false, from:-1, to:-1};
         this.choice = null;
 
         this.resetPattern();
@@ -239,6 +241,38 @@ class ObjectToken {
         item.setAttribute( 'patt-selected', selected ? 'true' : 'false' );
 
         return item;
+    }
+
+    // *************************************************************************
+    // **************************************************************** Validity
+    checkValidObject( text ) {
+        this.objectToken = {valid: false, from:-1, to:-1};
+        // look for a valid pattern
+        for( let ip=0; ip < objectPatterns.length; ip++) {
+            let patternType = objectPatterns[ip];
+
+            // enclose start
+            let startPos = text.indexOf( patternType.enclosing.start );
+            if (startPos >= 0) {
+                this.objectToken.from = startPos;
+                this.objectToken.to = text.indexOf( patternType.enclosing.end, startPos+1 );
+                this.objectToken.valid = (this.objectToken.to > this.objectToken.from);
+                break; // no need to look for other Pattern
+            }
+        }
+    }
+    getInfoElem() {
+        let parentElem = document.createElement( 'span' );
+
+        let objectElem = document.createElement( 'span' );
+        objectElem.classList.add( "token" );
+        if (this.objectToken.valid) {
+            objectElem.classList.add( "valid" );
+        }
+        objectElem.innerHTML = 'OBJ ['+this.objectToken.from+', '+this.objectToken.to+'] '; 
+        parentElem.appendChild( objectElem );
+        
+        return parentElem;
     }
 };
 

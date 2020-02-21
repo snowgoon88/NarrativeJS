@@ -350,7 +350,8 @@ ReactDOM.render(
 // ******************************************************************** Terminal
 // *****************************************************************************
 let terminalNode = document.getElementById( 'terminal' );
-let terminal = new Terminal( terminalNode );
+let terminalInfoNode = document.getElementById( 'terminal_info' );
+let terminal = new Terminal( terminalNode, terminalInfoNode );
 
 function eventHandler( event ) {
     console.log( "EVENT=",event);

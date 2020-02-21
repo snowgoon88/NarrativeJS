@@ -11,8 +11,10 @@
 // afterwards, any inputed text to containterE
 
 class Terminal {
-    constructor( containerElement ) {
+    constructor( containerElement, infoElement ) {
         this.containerE = containerElement;
+        this.infoE = infoElement;
+        console.log( "TERM cont",this.containerE,"info",this.infoE );
 
         // create a popupDiv
         this.popupE = document.createElement( 'div' );
@@ -164,6 +166,11 @@ class Terminal {
         
         this.updateHTML();
         this.updatePopupWithElement( this.cmdLine.getOverlayElement( 5 ));
+
+        if (this.infoE) {
+            this.cmdLine.checkValidObject( this.text );
+            this.updateInfoWithElement( this.cmdLine.getInfoElem() );
+        }
     }
     /** Update terminal Element 
      * Erase beforeE, cursorE and afterE 
@@ -230,10 +237,26 @@ class Terminal {
         this.popupE.style.left = coord.left + coord.width + 'px';
 	this.popupE.style.top = coord.top + coord.height + 'px';
     }
+    updateInfoWithElement( elem ) {
+        this.infoE.innerHTML = '';
+        this.infoE.appendChild( elem );
+    }
     /*
      * Replace ' ' with &nbsp
      */
     htmlize( text ) {
         return text.replace( / /g, '&nbsp;' );
     }
+}
+
+
+console.log( "**** Test regexp *******************************" );
+let testStr = [ '$bouh ', '$bo ou ', '$! ', 'all ', '$bééé ' ];
+let regValid = /^\s*\$\S*\s$/g;
+let res;
+for( let i=0; i<testStr.length; i++) {
+    res = testStr[i].match( regValid );
+    console.log( testStr[i],"=>",res);
+    res = regValid.test( testStr[i] );
+    console.log( testStr[i],"=>",res);
 }

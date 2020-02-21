@@ -1,4 +1,4 @@
-* CURRENT : clean up Terminal, in React ???
+* CURRENT : [[add_completion]] in Terminal
 * CURRENT : redisplay after adding node using [[add_node]]
 * CURRENT : [[add_node]] while preserving order
 * Fonctionnalités
@@ -12,9 +12,11 @@
 ** DONE get Screen coordinate of cursor
 ** DONE deal this composed characters
 ** TODO clean up
-** TODO [1/4] add completion
+** TODO [2/5] add completion
+<add_completion>>
 *** DONE BASIC $object and "object" TOKEN recognized and completed if EXIST
-*** TODO When ended, validation and new type of TOKEN (command)
+*** DONE When TOKEN ended, validation
+*** TODO When TOKEN ended, new type of TOKEN (command)
 *** TODO Enable/Disable hint or completion with Ctrl+ENTER
 *** TODO beware, position of popup when on the right
 * [3/5] New Story
