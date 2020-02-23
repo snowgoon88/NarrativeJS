@@ -14,29 +14,78 @@ var selections = ['all', 'persones', 'relations'];
 var persons = [ 'KABUKI René', 'KABUKI Jo', 'BUSHI Paul', 'KI van dam' ];
 var actions = [ 'add', 'list', 'show', 'remove', 'supprim' ];
 
+
 var objectPatterns = [
     {
         name: "selection",
-        marker: '$',
-        closing: ' ',
+        startMark: '$',
+        endMark: '',
+        addAfter: ' ',
         candidates: function() { return selections; },
-        enclosing: {start:'$', end:' '}
+        // If valid token starting with '$', endPos is right
+        // is AT the end of the token. Ex : $allX
+        // otherwise, it is the end to the text
+        endPosition: function ( text ) {
+            // look for a valid token
+            let allCand = this.candidates();
+            for( let ic=0; ic < allCand.length; ic++ ) {
+                let posStart = text.indexOf( this.startMark+allCand[ic] );
+                if ( posStart >= 0) {
+                    return {
+                        endPos: (posStart + allCand[ic].length + this.startMark.length),
+                        token: allCand[ic]
+                    };
+                }
+            }
+            return {endPos: -1, token:''};
+        }
     },
     {
         name: "person",
-        marker: '"',
-        closing: '" ',
+        startMark: '"',
+        endMark: '"',
+        addAfter: ' ',
         candidates: function() { return persons; },
-        enclosing: {start:'"', end:'" '}
+        // return endPos without the endMark => pos where we can still look
+        // for pattern completion
+        endPosition: function( text ) {
+            // look if startMark exists befor endMark
+            let startPos = text.indexOf( this.startMark );
+            if (startPos >= 0) {
+                let endPos = text.indexOf( this.endMark, startPos+1 );
+                if (endPos >= 0) {
+                    return {
+                        endPos: endPos,
+                        token: text.slice( startPos+1, endPos )
+                    };
+                }
+            }
+            return {endPos: -1, token:''};
+        }
     }
 ];
 var actionPatterns = [
     {
         name: "action",
-        marker: ' ',
-        closing: ' ',
+        startMark: ' ',
+        endMark: '',
+        addAfter: ' ',
         candidates: function() { return actions; },
-        enclosing: {start:' ', end:' '}
+        //enclosing: {start:' ', end:' '}
+        endPosition: function( text ) {
+             // look for a valid token
+            let allCand = this.candidates();
+            for( let ic=0; ic < allCand.length; ic++ ) {
+                let posStart = text.indexOf( this.startMark+allCand[ic] );
+                if (posStart >= 0) {
+                    return {
+                        endPos: (posStart + allCand[ic].length + this.startMark.length),
+                        token: allCand[ic]
+                    };
+                }
+            }
+            return {endPos: -1, token:'' };
+        }
     }
 ];
 var argsPatterns = [
@@ -67,7 +116,7 @@ class ObjectToken {
     constructor( label, patternTypes ) {
         this.label = label;
         this.patternTypes = patternTypes;
-        //this.token = {valid:false, from:-1, to:-1};
+
         this.valid = false;
         this.from = -1;
         this.to = -1;
@@ -78,6 +127,7 @@ class ObjectToken {
     }
 
     lookForPatternMatches( pattern, type ) {
+        console.log( "LFPM pat=|"+pattern+"|, sel="+type.name );
         // regexp search pattern, case sensitive
         let flagSearch = _caseSensitive ? "" : "i" ;
         let regpat = RegExp( regExpEscape(pattern), flagSearch );
@@ -113,9 +163,8 @@ class ObjectToken {
         }
     }
     
-    
-    
     lookForPatternInText( text, pos ) {
+        console.log( this.label+" LFPIT check all pos=",pos,"text=|"+text+"|" );
         // if pos == 0 : nothing
         if (pos == 0) {
             //console.log( "LFPIT pos==0" );
@@ -124,16 +173,14 @@ class ObjectToken {
         }
         
         // then check for every possible Patterns type
-        //console.log( this.label+" LFPIT check all pos=",pos,"text=",text );
-        
         for( let ip=0; ip < this.patternTypes.length; ip++) {
             let patternType = this.patternTypes[ip];
-            //console.log( "LFPIT check for",patternType.name);
+            console.log( "LFPIT check for",patternType.name);
             // check if its marker is present
-            let posMarker = text.lastIndexOf( patternType.marker, pos );
+            let posMarker = text.lastIndexOf( patternType.startMark, pos );
 
             if (posMarker >= 0) {
-                //console.log( "LFPIT marker",patternType.marker,"found at",posMarker);
+                console.log( "LFPIT marker",patternType.startMark,"found at",posMarker);
                 this.lookForPatternMatches(
                     text.slice( posMarker+1, pos),
                     patternType
@@ -154,8 +201,9 @@ class ObjectToken {
         }
         if (this.indexSelection < this.startMatches.length) {
             return {
-                text: this.startMatches[this.indexSelection].cmd +
-                    this.startMatches[this.indexSelection].type.closing,
+                text: this.startMatches[this.indexSelection].cmd
+                    + this.startMatches[this.indexSelection].type.endMark
+                    + this.startMatches[this.indexSelection].type.addAfter, 
                 pattern : this.startMatches[this.indexSelection].pattern
             };
         }
@@ -163,7 +211,8 @@ class ObjectToken {
         if (index >= 0) {
             return {
                 text: this.otherMatches[index].cmd
-                    + this.otherMatches[index].type.closing,
+                    + this.otherMatches[index].type.endMark
+                    + this.otherMatches[this.indexSelection].type.addAfter,
                 pattern: this.otherMatches[index].pattern
             };
         }
@@ -243,8 +292,8 @@ class ObjectToken {
      */
     checkValid( text, lowerLimit ) {
         this.valid = false;
-        this.from = -1;
-        this.to = -1;
+        this.from = lowerLimit;
+        this.to = text.length;
         this.token = '';
         this.type = null;
         
@@ -252,15 +301,13 @@ class ObjectToken {
         for( let ip=0; ip < this.patternTypes.length; ip++) {
             let patternType = this.patternTypes[ip];
 
-            // enclose start
-            let startPos = text.indexOf( patternType.enclosing.start, lowerLimit );
-            if (startPos >= 0) {
-                this.from = startPos;
-                this.to = text.indexOf( patternType.enclosing.end, startPos+1 );
-                this.valid = (this.to > this.from);
+            let res = patternType.endPosition( text );
+            if (res.endPos >=0) {
+                this.valid = true;
+                this.to = res.endPos;
+                this.token = res.token;
                 this.type = patternType;
-                this.token = text.slice( this.from, this.to );
-                break; // no need to look for other Pattern
+                break;
             }
         }
     }
@@ -295,76 +342,97 @@ class CommandLine {
      */
     update( text, pos ) {
         // Look for Token validity
-        this.objectToken.checkValid( text, 0 );
-        this.actionToken.checkValid( text, this.objectToken.to);
-
-        if (this.objectToken.valid && this.actionToken.valid &&
-            this.argsToken.length == 0 ) {
-            // add argsToken
-            this.appendArgs( text );
+        let posCheck = 0;
+        this.objectToken.checkValid( text, posCheck );
+        posCheck += this.objectToken.to;
+        if (this.objectToken.valid) {
+            posCheck += this.objectToken.type.endMark.length;
         }
+        this.actionToken.checkValid( text, posCheck );
+        // let posChecking = this.actionToken.to;
+        // for(let ia = 0; ia < this.argsToken.length; ia++) {
+        //     this.argsToken[ia].checkValid( text, posChecking);
+        //     posChecking = this.argsToken[ia].to > 0 ? this.argsToken.to : this.actionToken.to;
+        // }
         
+        // if (this.objectToken.valid && this.actionToken.valid &&
+        //     this.argsToken.length == 0 ) {
+        //     // add argsToken
+        //     this.appendArgs( text );
+        // }
+
+
         // Popup will depend on cursor position => which TOKEN
-        this.currentToken = this.objectToken;
-        if (this.actionToken.from >= 0 && pos >= this.actionToken.from) {
+        this.currentToken = null;
+        if (pos >= this.objectToken.from && pos <= this.objectToken.to ) {
+            this.currentToken = this.objectToken;
+        }
+        else if (pos >= this.actionToken.from && pos <= this.actionToken.to ) {
             this.currentToken = this.actionToken;
         }
-        //console.log( "CURRENT =",this.currentToken.label, this.actionToken.token.from );
-        let token = this.currentToken;
-        let posVirtual = pos - (token.from >= 0 ? token.from : 0 );
-        let textSearched = text.slice(
-            token.from >= 0 ? token.from : 0,
-            token.to >= 0 ? token.to : text.length
-        );
-        
-        this.currentToken.lookForPatternInText( textSearched, posVirtual );    
+
+        if (this.currentToken != null ) {
+            let textSearched = text.slice( this.currentToken.from,
+                                           this.currentToken.to );
+            let posVirtual = pos - this.currentToken.from;
+            console.log( "CURRENT =",this.currentToken.label);
+            this.currentToken.lookForPatternInText( textSearched, posVirtual );
+        }
+        else {
+            console.log( "CURRENT = NULL" );
+        }
     }
 
-    appendArgs( text ) {
-        let objectT = this.objectToken.token;
-        let actionT = this.actionToken.token;
+    // appendArgs( text ) {
+    //     let objectT = this.objectToken.token;
+    //     let actionT = this.actionToken.token;
         
-        console.log( 'ARGS obj=|'+objectT+'| act=|'+actionT+'|' );
-        for( let ic=0; ic<cmdList.length; ic++) {
-            if (cmdList[ic].object.localeCompare( objectT ) == 0) {
-                let args = cmdList[ic].actions[actionT].args;
-                console.log( '    args=',args );
+    //     console.log( 'ARGS obj=|'+objectT+'| act=|'+actionT+'|' );
+    //     for( let ic=0; ic<cmdList.length; ic++) {
+    //         if (cmdList[ic].object.localeCompare( objectT ) == 0) {
+    //             let args = cmdList[ic].actions[actionT].args;
+    //             console.log( '    args=',args );
 
-                for (const [key, type] of Object.entries( args )) {
-                    console.log( "PatType for",key,type );
-                    let patternType = this.patternFromArgsType( key, type );
-                    console.log( "PatTYPE ",patternType );
-                    this.argsToken.push( new ObjectToken( key, patternType ));
-                }
+    //             for (const [key, type] of Object.entries( args )) {
+    //                 console.log( "PatType for",key,type );
+    //                 let patternType = this.patternFromArgsType( key, type );
+    //                 console.log( "PatTYPE ",patternType );
+    //                 this.argsToken.push( new ObjectToken( key, patternType ));
+    //             }
                        
-                break;
-            }
-        }
-    }
-    patternFromArgsType( argName, argType ) {
-        let patternType = null;
-        for( let ia=0; ia < argsPatterns.length; ia++ ) {
-            console.log( 'compare with',argsPatterns[ia].name );
-            if (argsPatterns[ia].name.localeCompare( argType ) == 0) {
-                patternType = argsPatterns[ia];
-                patternType.marker = argName+patternType.marker;
-                patternType.enclosing.start = patternType.marker;
+    //             break;
+    //         }
+    //     }
+    // }
+    // patternFromArgsType( argName, argType ) {
+    //     let patternType = null;
+    //     for( let ia=0; ia < argsPatterns.length; ia++ ) {
+    //         console.log( 'compare with',argsPatterns[ia].name );
+    //         if (argsPatterns[ia].name.localeCompare( argType ) == 0) {
+    //             patternType = argsPatterns[ia];
+    //             patternType.marker = argName+patternType.marker;
+    //             patternType.enclosing.start = patternType.marker;
 
-                return patternType;
-            }
-        }
-        return patternType;
-    }
+    //             return patternType;
+    //         }
+    //     }
+    //     return patternType;
+    // }
     
     updatePopup( popupElement ) {
-        popupElement.appendChild( this.currentToken.getOverlayElement( 5 ));
+        if (this.currentToken != null) {
+            popupElement.appendChild( this.currentToken.getOverlayElement( 5 ));
+        }
+        else {
+            popupElement.innerHTML = '--VOID--';
+        }
     }
     
     updateInfo( infoElement ) {
         infoElement.appendChild( this.objectToken.getInfoElem());
         infoElement.appendChild( this.actionToken.getInfoElem());
-        for(let ia = 0; ia < this.argsToken.length; ia++) {
-            infoElement.appendChild( this.argsToken[ia].getInfoElem());
-        }
+        // for(let ia = 0; ia < this.argsToken.length; ia++) {
+        //     infoElement.appendChild( this.argsToken[ia].getInfoElem());
+        // }
     }
 }

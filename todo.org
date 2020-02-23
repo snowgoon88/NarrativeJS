@@ -12,11 +12,11 @@
 ** DONE get Screen coordinate of cursor
 ** DONE deal this composed characters
 ** TODO clean up
-** TODO [3/6] add completion
+** TODO [2/6] add completion
 <add_completion>>
 *** DONE BASIC $object and "object" TOKEN recognized and completed if EXIST
 *** DONE When TOKEN ended, validation
-*** DONE When TOKEN ended, new type of TOKEN (command)
+*** TODO When TOKEN ended, new type of TOKEN (command)
 *** TODO $personnes add name="Billy Joe"
 *** TODO Enable/Disable hint or completion with Ctrl+ENTER
 *** TODO beware, position of popup when on the right

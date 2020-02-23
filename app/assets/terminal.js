@@ -36,6 +36,10 @@ class Terminal {
         this.hasChanged= false;
 
         this.cmdLine = new CommandLine();
+        if (this.infoE) {
+            this.infoE.innerHTML = '&lt;'+this.cursorPos+'&gt;&nbsp;';
+            this.cmdLine.updateInfo( this.infoE );
+        }
 
         this.containerE.addEventListener( 'keydown',
                                           this.handleKeyDown.bind(this) );
@@ -85,7 +89,7 @@ class Terminal {
     /** handle keydown (keypress is/will be deprecated)
      */
     handleKeyDown( event ) {
-        console.log( "DOWN evt=", event );
+        //console.log( "DOWN evt=", event );
         // unlike keypress, Shif+A generates 2 events...
         let key = event.key;
         
@@ -121,7 +125,7 @@ class Terminal {
         else if (key == "ArrowDown") {
             this.cmdLine.currentToken.moveSelection( +1 );
         }
-        else if (["Dead", "Compose", "Process", "Control"].includes( key) ) {
+        else if (["Dead", "Compose", "Process", "Control", "Alt"].includes( key) ) {
             //console.log( "STOP" );
         }
         else if (key != "Shift") {
@@ -172,7 +176,7 @@ class Terminal {
         this.updatePopupPosition();
 
         if (this.infoE) {
-            this.infoE.innerHTML = '';
+            this.infoE.innerHTML = '&lt;'+this.cursorPos+'&gt;&nbsp;';
             this.cmdLine.updateInfo( this.infoE );
         }
     }
