@@ -60,7 +60,7 @@ var objectPatterns = [
                     };
                 }
             }
-            return {endPos: -1, token:''};
+            return {endPos: -1, token:''};           
         }
     }
 ];
@@ -90,21 +90,78 @@ var actionPatterns = [
 ];
 var argsPatterns = [
     {
+        name: 'arg $person add',
+        startMark: ' ',
+        endMark: '=',
+        addAfter: '"',
+        candidates: function() {return ['name', 'sex', 'born'];},
+        endPosition: function ( text ) {
+            // look for a valid token
+            let allCand = this.candidates();
+            for( let ic=0; ic < allCand.length; ic++ ) {
+                let posStart = text.indexOf( this.startMark+allCand[ic] );
+                if ( posStart >= 0) {
+                    return {
+                        endPos: (posStart + allCand[ic].length + this.startMark.length), // should allow next Token to start at "
+                        token: allCand[ic]
+                    };
+                }
+            }
+            return {endPos: -1, token:''};
+        }
+    }
+];
+var stringPattern = [
+    {
         name: 'string',
-        marker: '="',
-        closing: '"',
-        candidates: null,
-        enclosing: {start:'="', end:'"' }
+        startMark: '"',
+        endMark: '"',
+        addAfter: ' ',
+        candidates: function() { return ['bouh']; },
+        endPosition: function( text ) {
+            // look if startMark exists befor endMark
+            let startPos = text.indexOf( this.startMark );
+            if (startPos >= 0) {
+                let endPos = text.indexOf( this.endMark, startPos+1 );
+                if (endPos >= 0) {
+                    return {
+                        endPos: endPos,
+                        token: text.slice( startPos+1, endPos )
+                    };
+                }
+            }
+            return {endPos: -1, token:''};
+        }
     }
 ];
 
 var cmdList = [
-    { object: '$persones',
-      actions: {
-          ' add': {
-              args: { name: 'string' },
-              apply: function( args ) {
-                  story.addPerson( args );
+    { '$all': 
+      {
+          actions: {
+              'show' : {
+                  args: {},
+                  apply: function( args ) {
+                      console.log( 'Other selections are $persones, $relations' );
+                  }
+              },
+          },
+      }
+    },
+    { '$persones':
+      {
+          actions: {
+              'add': {
+                  args: { name: 'string', sex: 'string', born: 'string' },
+                  apply: function( args ) {
+                      story.addPerson( args );
+                  }
+              },
+              'show': {
+                  args: {},
+                  apply: function( args ) {
+                      console.log( 'SHOULD give short list of all persons' );
+                  }
               }
           }
       }
@@ -124,6 +181,9 @@ class ObjectToken {
         this.type = null;
 
         this.resetPattern();
+    }
+    hasChoices() {
+        return ((this.startMatches.length + this.otherMatches.length) > 0);
     }
 
     lookForPatternMatches( pattern, type ) {
@@ -301,10 +361,10 @@ class ObjectToken {
         for( let ip=0; ip < this.patternTypes.length; ip++) {
             let patternType = this.patternTypes[ip];
 
-            let res = patternType.endPosition( text );
+            let res = patternType.endPosition( text.slice( lowerLimit ));
             if (res.endPos >=0) {
                 this.valid = true;
-                this.to = res.endPos;
+                this.to = res.endPos + lowerLimit;
                 this.token = res.token;
                 this.type = patternType;
                 break;
@@ -344,23 +404,35 @@ class CommandLine {
         // Look for Token validity
         let posCheck = 0;
         this.objectToken.checkValid( text, posCheck );
-        posCheck += this.objectToken.to;
+        posCheck = this.objectToken.to;
         if (this.objectToken.valid) {
             posCheck += this.objectToken.type.endMark.length;
         }
         this.actionToken.checkValid( text, posCheck );
-        // let posChecking = this.actionToken.to;
-        // for(let ia = 0; ia < this.argsToken.length; ia++) {
-        //     this.argsToken[ia].checkValid( text, posChecking);
-        //     posChecking = this.argsToken[ia].to > 0 ? this.argsToken.to : this.actionToken.to;
-        // }
+        posCheck = this.actionToken.to;
+        if (this.actionToken.valid) {
+            posCheck += this.actionToken.type.endMark.length;
+        }
+        // add some args ?
+        if (this.objectToken.valid && this.actionToken.valid &&
+            this.argsToken.length == 0 ) {
+            // add argsToken
+            //this.appendArgs( text );
+            this.argsToken.push( new ObjectToken( 'ARG0', argsPatterns ));
+            this.argsToken.push( new ObjectToken( 'STR0', stringPattern ));
+            this.argsToken.push( new ObjectToken( 'ARG1', argsPatterns ));
+            this.argsToken.push( new ObjectToken( 'STR1', stringPattern ));
+        }
+        // TODO if valid args, add right parameters.
         
-        // if (this.objectToken.valid && this.actionToken.valid &&
-        //     this.argsToken.length == 0 ) {
-        //     // add argsToken
-        //     this.appendArgs( text );
-        // }
-
+        // let posChecking = this.actionToken.to;
+        for(let ia = 0; ia < this.argsToken.length; ia++) {
+            this.argsToken[ia].checkValid( text, posCheck );
+            posCheck = this.argsToken[ia].to;
+            if (this.argsToken[ia].valid) {
+                posCheck += this.argsToken[ia].type.endMark.length;
+            }
+        }
 
         // Popup will depend on cursor position => which TOKEN
         this.currentToken = null;
@@ -369,6 +441,15 @@ class CommandLine {
         }
         else if (pos >= this.actionToken.from && pos <= this.actionToken.to ) {
             this.currentToken = this.actionToken;
+        }
+        else {
+            for(let ia = 0; ia < this.argsToken.length; ia++) {
+                if (pos >= this.argsToken[ia].from &&
+                    pos <= this.argsToken[ia].to ) {
+                    this.currentToken = this.argsToken[ia];
+                    break;
+                }
+            }
         }
 
         if (this.currentToken != null ) {
@@ -420,19 +501,22 @@ class CommandLine {
     // }
     
     updatePopup( popupElement ) {
-        if (this.currentToken != null) {
+        if (this.currentToken != null && this.currentToken.hasChoices() ) {
             popupElement.appendChild( this.currentToken.getOverlayElement( 5 ));
+            popupElement.classList.remove( "hidden" );
         }
         else {
             popupElement.innerHTML = '--VOID--';
+            popupElement.classList.add( "hidden" );
         }
     }
+    
     
     updateInfo( infoElement ) {
         infoElement.appendChild( this.objectToken.getInfoElem());
         infoElement.appendChild( this.actionToken.getInfoElem());
-        // for(let ia = 0; ia < this.argsToken.length; ia++) {
-        //     infoElement.appendChild( this.argsToken[ia].getInfoElem());
-        // }
+        for(let ia = 0; ia < this.argsToken.length; ia++) {
+            infoElement.appendChild( this.argsToken[ia].getInfoElem());
+        }
     }
 }

@@ -19,7 +19,7 @@ class Terminal {
         // create a popupDiv
         this.popupE = document.createElement( 'div' );
         this.popupE.classList.add( 'popup' );
-        this.popupE.style.display = 'block';
+        //this.popupE.style.display = 'block';
         this.containerE.appendChild( this.popupE );
         // and some spans for before, cursor and after
         this.beforeE = document.createElement( 'span' );
@@ -49,6 +49,8 @@ class Terminal {
                                           //true /* capture */);
         this.containerE.addEventListener( 'keyup',
                                           this.handleKeyUp.bind(this) );
+
+        this.updateHTML();
     }
     /** Insert 'msg' at cursorPos */
     addText( msg ) {
@@ -114,10 +116,12 @@ class Terminal {
             }
         }
         else if (key == "Tab") {
-            let completion = this.cmdLine.currentToken.validActualCompletion();
-            console.log( "TO INSERT",completion );
-            this.removeCharacters( -completion.pattern.length );
-            this.addText( completion.text );
+            if (this.cmdLine.currentToken != null ) {
+                let completion = this.cmdLine.currentToken.validActualCompletion();
+                console.log( "TO INSERT",completion );
+                this.removeCharacters( -completion.pattern.length );
+                this.addText( completion.text );
+            }
         }
         else if (key == "ArrowUp") {
             this.cmdLine.currentToken.moveSelection( -1 );

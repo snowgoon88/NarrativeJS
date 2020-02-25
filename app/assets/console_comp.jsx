@@ -8,7 +8,7 @@ var popupNode = document.getElementById( 'completion_popup' );
 var infoNode = document.getElementById( 'info' );
 var _offLeft = 0;
 var _offTop = 0;
-popupNode.style.display = 'block';
+//popupNode.style.display = 'block';
 
 
 var completionPatterns = [

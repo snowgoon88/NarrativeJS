@@ -49,7 +49,7 @@ div {
 }
 .popup {
     position: absolute;
-    display: none;      /* hidden by default */
+    display: block;      /* hidden by default */
     background-color: lightblue;
     box-sizing : border-box;
     z-index: 2; 
@@ -75,6 +75,9 @@ div {
 }
 .valid {
     color: green;
+}
+.hidden {
+    display: none;
 }
 @keyframes blinkingBack {
     0%, 100% {
